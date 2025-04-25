@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BADMASHI NHI MITTER</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 20px; }
+    input, button { padding: 10px; margin-top: 10px; width: 100%; border-radius: 5px; border: none; }
+    button { background: #1db954; color: white; cursor: pointer; }
+    video { width: 100%; margin-top: 20px; background: black; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h2>YE RAVINDRA KUMAR HAI HAAN MERE JAAN </h2>
+  <input type="text" id="streamUrl" placeholder="https://d35j504z0x2vu2.cloudfront.net/v1/manifest/0bc8e8376bd8417a1b6761138aa41c26c7309312/9xm/ebd448d1-cdd6-4018-8288-283722145d7d/3.m3u8" />
+  <button onclick="playStream()">Play KR DE CHUP CHHAP</button>
+  <video id="videoPlayer" controls autoplay></video>
+
+  <script>
+    function playStream() {
+      const url = document.getElementById('streamUrl').value;
+      const video = document.getElementById('videoPlayer');
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+      } else {
+        alert('Your browser does not support HLS.');
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</body>
+</html>
