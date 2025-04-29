@@ -2,269 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BADMASHI NHI MITTER</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>M3U8 Stream Player</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-
-    #videoContainer {
-      position: relative;
-      max-width: 900px;
-      margin: 0 auto;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
     video {
-      width: 100%;
-      display: block;
-      background: black;
-    }
-
-    .controls {
-      position: absolute;
-      bottom: 35px;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 10;
-      flex-wrap: wrap;
-    }
-
-    .controls button,
-    .controls select {
-      background: none;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      font-size: 16px;
-      margin: 5px;
-    }
-
-    .controls select {
-      background: #2a2a2a;
-      border-radius: 4px;
-      padding: 4px 6px;
-      color: #fff;
-      border: 1px solid #444;
-    }
-
-    #volumeSlider {
-      width: 100px;
-      margin: 0 10px;
-    }
-
-    .left-controls,
-    .right-controls {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    #liveStatus {
-      background: red;
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-left: 10px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    #logoOverlay {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 5px 10px;
-      color: white;
-      font-weight: bold;
-      border-radius: 5px;
-      z-index: 9;
-      font-size: 14px;
-    }
-
-    #progressBar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: #444;
-      cursor: not-allowed;
-    }
-
-    #progressFill {
-      height: 100%;
-      width: 100%;
-      background: red;
-      transition: width 0.2s;
-    }
-
-    .telegram-button {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #0088cc;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-
-    .telegram-button:hover {
-      background-color: #0072b0;
+      width: 90%;
+      max-width: 800px;
+      height: auto;
+      border: 2px solid #fff;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h2>Also join telegram for update</h2>
-  <h3>aaj sab ke liye free 🥺❤️‍🩹</h3>
-
-  <div>
-    <label for="streamSelect">Choose Stream:</label>
-    <select id="streamSelect">
-      <option value="https://starsporthindii.pages.dev/index.m3u8">Star Sports Hindi</option>
-      <option value="https://v18tataplaysyndication.akamaized.net/bpk-tv/Colors_HD_voot_MOB/output03/hdntl=exp=1746036461~acl=%2f*~data=hdntl~hmac=670f53096683d53cd7814fd4fb4575e0ce88d732bdbb193d079eea80a195a1ce/Colors_HD_voot_MOB-audio_98835_hin=98800-video=1272000.m3u8">Colours HD</option>
-      <option value="https://liveexample.com/stream2.m3u8">Example Stream 2</option>
-    </select>
-  </div>
-
-  <div id="videoContainer">
-    <video id="videoPlayer" autoplay muted></video>
-    <div id="logoOverlay">ravindra7812</div>
-
-    <div id="progressBar"><div id="progressFill"></div></div>
-
-    <div class="controls">
-      <div class="left-controls">
-        <button id="playPause">⏯</button>
-        <button id="mute">🔈</button>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
-        <button id="pip">📺</button>
-        <span id="liveStatus">🔴 LIVE</span>
-      </div>
-
-      <select id="qualitySelect">
-        <option value="-1">Auto</option>
-      </select>
-
-      <div class="right-controls">
-        <button id="fullscreen">⛶</button>
-      </div>
-    </div>
-  </div>
-
-  <a class="telegram-button" href="https://t.me/YourChannel" target="_blank">
-    Join on Telegram 🔗
-  </a>
+  <video id="video" controls autoplay></video>
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
-    const video = document.getElementById('videoPlayer');
-    const playPause = document.getElementById('playPause');
-    const muteBtn = document.getElementById('mute');
-    const pipBtn = document.getElementById('pip');
-    const fullscreenBtn = document.getElementById('fullscreen');
-    const qualitySelect = document.getElementById('qualitySelect');
-    const volumeSlider = document.getElementById('volumeSlider');
-    const liveStatus = document.getElementById('liveStatus');
-    const streamSelect = document.getElementById('streamSelect');
+    const video = document.getElementById('video');
+    const videoSrc = "https://v18tataplaysyndication.akamaized.net/bpk-tv/Colors_HD_voot_MOB/output03/hdntl=exp=1746036461~acl=%2f*~data=hdntl~hmac=670f53096683d53cd7814fd4fb4575e0ce88d732bdbb193d079eea80a195a1ce/Colors_HD_voot_MOB-audio_98835_hin=98800-video=1272000.m3u8";
 
-    let hls;
-
-    function loadStream(url) {
-      if (hls) {
-        hls.destroy();
-      }
-      hls = new Hls();
-      hls.loadSource(url);
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
       hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        qualitySelect.innerHTML = '<option value="-1">Auto</option>';
-        hls.levels.forEach((level, i) => {
-          const option = document.createElement("option");
-          option.value = i;
-          option.text = `${level.height}p`;
-          qualitySelect.appendChild(option);
-        });
-
-        qualitySelect.addEventListener('change', (event) => {
-          const val = parseInt(event.target.value);
-          hls.currentLevel = val;
-        });
-      });
-    }
-
-    // Initial load
-    loadStream(streamSelect.value);
-
-    streamSelect.addEventListener("change", () => {
-      loadStream(streamSelect.value);
-    });
-
-    playPause.addEventListener('click', () => {
-      if (video.paused) {
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play();
-        playPause.textContent = '⏸';
-        liveStatus.textContent = '🔴 LIVE';
-        liveStatus.style.background = 'red';
-      } else {
-        video.pause();
-        playPause.textContent = '▶️';
-        liveStatus.textContent = '⏸ Paused';
-        liveStatus.style.background = '#666';
-      }
-    });
-
-    muteBtn.addEventListener('click', () => {
-      video.muted = !video.muted;
-      muteBtn.textContent = video.muted ? '🔇' : '🔈';
-      volumeSlider.value = video.muted ? 0 : video.volume;
-    });
-
-    volumeSlider.addEventListener('input', () => {
-      video.volume = volumeSlider.value;
-      video.muted = video.volume === 0;
-      muteBtn.textContent = video.muted ? '🔇' : '🔈';
-    });
-
-    pipBtn.addEventListener('click', async () => {
-      if (document.pictureInPictureElement) {
-        document.exitPictureInPicture();
-      } else {
-        try {
-          await video.requestPictureInPicture();
-        } catch (error) {
-          alert('Picture-in-Picture not supported.');
-        }
-      }
-    });
-
-    fullscreenBtn.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        video.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    });
-
-    video.volume = 0.5;
-    volumeSlider.value = 0.5;
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = videoSrc;
+      video.addEventListener('loadedmetadata', () => {
+        video.play();
+      });
+    } else {
+      alert("Your browser doesn't support HLS playback.");
+    }
   </script>
-
 </body>
 </html>
