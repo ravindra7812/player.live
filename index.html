@@ -1,45 +1,308 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>My Web Channel Player</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-      body {
-        background-color: #000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
-      video {
-        width: 90%;
-        max-width: 800px;
-        border: 4px solid #fff;
-        border-radius: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <video id="video" controls autoplay></video>
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raviislive</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
 
-    <script>
-      const video = document.getElementById('video');
-      const videoSrc = "https://star-restream-by07.vercel.app/api/stream?channel=sony-(4k).-by07-1";
+    #videoContainer {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          video.play();
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-        video.addEventListener('loadedmetadata', function () {
-          video.play();
-        });
+    video {
+      width: 100%;
+      display: block;
+      background: black;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 35px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+
+    .controls button,
+    .controls select {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+
+    .controls select {
+      background: #2a2a2a;
+      border-radius: 4px;
+      padding: 4px 6px;
+      color: #fff;
+      border: 1px solid #444;
+    }
+
+    #volumeSlider {
+      width: 100px;
+      margin: 0 10px;
+    }
+
+    .left-controls,
+    .right-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #liveStatus {
+      background: red;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-left: 10px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    #logoOverlay {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 5px 10px;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      z-index: 9;
+      font-size: 14px;
+    }
+
+    #progressBar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: #444;
+      cursor: not-allowed;
+    }
+
+    #progressFill {
+      height: 100%;
+      width: 100%;
+      background: red;
+      transition: width 0.2s;
+    }
+
+    .telegram-button {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #0088cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .telegram-button:hover {
+      background-color: #0072b0;
+    }
+
+    .channel-logos img {
+      width: 100px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: transform 0.2s;
+    }
+
+    .channel-logos img:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Also join telegram for update</h2>
+  <h3>aaj sab ke liye free 🥺❤️‍🩹</h3>
+
+  <!-- Channel Logos -->
+  <div class="channel-logos">
+    <img src="./l.jpg"
+         alt="Star Sports Hindi"
+         onclick="loadStream('https://starsporthindii.pages.dev/index.m3u8')">
+
+    <img src="./c.png"
+         alt="Colours HD"
+         onclick="loadStream('https://v18tataplaysyndication.akamaized.net/bpk-tv/Colors_HD_voot_MOB/output03/hdntl=exp=1746035321~acl=%2f*~data=hdntl~hmac=83396739028e41e47b0d8ce4f27ab342d7d4df5bd7e80e2ac56f5d1565526f0a/Colors_HD_voot_MOB-audio_98835_hin=98800-video=3724000.m3u8')">
+
+    <img src="./9.png"
+         alt="9XM"
+         onclick="loadStream('https://d35j504z0x2vu2.cloudfront.net/v1/manifest/0bc8e8376bd8417a1b6761138aa41c26c7309312/9xm/ebd448d1-cdd6-4018-8288-283722145d7d/3.m3u8')">
+
+    <img src="./m.jpg"
+         alt="Star Sports 2"
+         onclick="loadStream('https://v18tataplaysyndication.akamaized.net/bpk-tv/StarSports_2_Hin_HD_voot_MOB/output03/hdntl=exp=1746092452~acl=%2f*~data=hdntl~hmac=91a89652dfec2d00d766eaa62f43183d00cc7c5519056aed6d39c456c73333a7/StarSports_2_Hin_HD_voot_MOB-audio_108038_hin=108000-video=3932400.m3u8')">
+  </div>
+
+  <!-- Stream Dropdown -->
+  <div>
+    <label for="streamSelect">Choose Stream:</label>
+    <select id="streamSelect">
+      <option value="https://starsporthindii.pages.dev/index.m3u8">Star Sports Hindi</option>
+      <option value="https://v18tataplaysyndication.akamaized.net/bpk-tv/Colors_HD_voot_MOB/output03/hdntl=exp=1746035321~acl=%2f*~data=hdntl~hmac=83396739028e41e47b0d8ce4f27ab342d7d4df5bd7e80e2ac56f5d1565526f0a/Colors_HD_voot_MOB-audio_98835_hin=98800-video=3724000.m3u8">Colours HD</option>
+      <option value="https://d35j504z0x2vu2.cloudfront.net/v1/manifest/0bc8e8376bd8417a1b6761138aa41c26c7309312/9xm/ebd448d1-cdd6-4018-8288-283722145d7d/3.m3u8">9XM</option>
+      <option value="https://v18tataplaysyndication.akamaized.net/bpk-tv/StarSports_2_Hin_HD_voot_MOB/output03/hdntl=exp=1746092452~acl=%2f*~data=hdntl~hmac=91a89652dfec2d00d766eaa62f43183d00cc7c5519056aed6d39c456c73333a7/StarSports_2_Hin_HD_voot_MOB-audio_108038_hin=108000-video=3932400.m3u8">Star Sports 2</option>
+    </select>
+  </div>
+
+  <!-- Video Container -->
+  <div id="videoContainer">
+    <video id="videoPlayer" autoplay muted></video>
+    <div id="logoOverlay">ravindra7812</div>
+
+    <div id="progressBar"><div id="progressFill"></div></div>
+
+    <div class="controls">
+      <div class="left-controls">
+        <button id="playPause">⏯</button>
+        <button id="mute">🔈</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
+        <button id="pip">📺</button>
+        <span id="liveStatus">🔴 LIVE</span>
+      </div>
+
+      <select id="qualitySelect">
+        <option value="-1">Auto</option>
+      </select>
+
+      <div class="right-controls">
+        <button id="fullscreen">⛶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Telegram Link -->
+  <a class="telegram-button" href="https://t.me/developerravindra" target="_blank">
+    Join on Telegram 🔗
+  </a>
+
+  <!-- HLS.js and JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    const video = document.getElementById('videoPlayer');
+    const playPause = document.getElementById('playPause');
+    const muteBtn = document.getElementById('mute');
+    const pipBtn = document.getElementById('pip');
+    const fullscreenBtn = document.getElementById('fullscreen');
+    const qualitySelect = document.getElementById('qualitySelect');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const liveStatus = document.getElementById('liveStatus');
+    const streamSelect = document.getElementById('streamSelect');
+
+    let hls;
+
+    function loadStream(url) {
+      if (hls) {
+        hls.destroy();
       }
-    </script>
-  </body>
+      hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        qualitySelect.innerHTML = '<option value="-1">Auto</option>';
+        hls.levels.forEach((level, i) => {
+          const option = document.createElement("option");
+          option.value = i;
+          option.text = `${level.height}p`;
+          qualitySelect.appendChild(option);
+        });
+
+        qualitySelect.addEventListener('change', (event) => {
+          const val = parseInt(event.target.value);
+          hls.currentLevel = val;
+        });
+      });
+
+      video.play();
+    }
+
+    // Initial load
+    loadStream(streamSelect.value);
+
+    streamSelect.addEventListener("change", () => {
+      loadStream(streamSelect.value);
+    });
+
+    playPause.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        playPause.textContent = '⏸';
+        liveStatus.textContent = '🔴 LIVE';
+        liveStatus.style.background = 'red';
+      } else {
+        video.pause();
+        playPause.textContent = '▶️';
+        liveStatus.textContent = '⏸ Paused';
+        liveStatus.style.background = '#666';
+      }
+    });
+
+    muteBtn.addEventListener('click', () => {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? '🔇' : '🔈';
+      volumeSlider.value = video.muted ? 0 : video.volume;
+    });
+
+    volumeSlider.addEventListener('input', () => {
+      video.volume = volumeSlider.value;
+      video.muted = video.volume === 0;
+      muteBtn.textContent = video.muted ? '🔇' : '🔈';
+    });
+
+    pipBtn.addEventListener('click', async () => {
+      if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      } else {
+        try {
+          await video.requestPictureInPicture();
+        } catch (error) {
+          alert('Picture-in-Picture not supported.');
+        }
+      }
+    });
+
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        video.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    video.volume = 0.5;
+    volumeSlider.value = 0.5;
+  </script>
+
+</body>
 </html>
